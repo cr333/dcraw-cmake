@@ -51,13 +51,25 @@
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
-#ifdef WIN32
+#ifdef _WIN32
+#include <direct.h>
+#include <io.h>
 #include <sys/utime.h>
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+// Work around various MSVC issues (C99 functions, missing POSIX functions or deprecation warnings).
+#define fileno _fileno
+#define fseeko _fseeki64
+#define ftello _ftelli64
+#define getc_unlocked _fgetc_nolock
+#define getcwd _getcwd
+#define isatty _isatty
+#define putenv _putenv
+#define setmode _setmode
 #define snprintf _snprintf
-#define strcasecmp stricmp
-#define strncasecmp strnicmp
+#define swab(from, to, n) _swab((char*)(from), (char*)(to), n)
 typedef __int64 INT64;
 typedef unsigned __int64 UINT64;
 #else
@@ -4605,7 +4617,7 @@ void CLASS cielab (ushort rgb[3], short lab[3])
   if (!rgb) {
     for (i=0; i < 0x10000; i++) {
       r = i / 65535.0;
-      cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
+      cbrt[i] = r > 0.008856 ? pow(r,1/3.0f) : 7.787*r + 16/116.0;
     }
     for (i=0; i < 3; i++)
       for (j=0; j < colors; j++)
@@ -5045,7 +5057,7 @@ void CLASS recover_highlights()
 
   if (verbose) fprintf (stderr,_("Rebuilding highlights...\n"));
 
-  grow = pow (2, 4-highlight);
+  grow = pow (2.0f, 4-highlight);
   FORCC hsat[c] = 32000 * pre_mul[c];
   for (kc=0, c=1; c < colors; c++)
     if (pre_mul[kc] < pre_mul[c]) kc = c;
