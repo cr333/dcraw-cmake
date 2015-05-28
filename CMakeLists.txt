@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
+project(dcraw)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 option(WITH_JPEG "Use libjpeg for decoding some compressed images and lossy Adobe DNGs." OFF)
-
-
-## Project setup ----------------------------------------------------------------------------------
-
-project(dcraw)
 
 add_executable(dcraw "dcraw.c")
 
